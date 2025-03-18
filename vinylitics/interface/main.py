@@ -2,6 +2,8 @@ from vinylitics.params import *
 from vinylitics.preproc.data import load_and_clean_data
 from vinylitics.preproc.preprocessor import preprocess_features
 from colorama import Fore, Style
+import pandas as pd
+
 
 
 def preprocess(ds="maharshipandya/spotify-tracks-dataset"):
@@ -16,6 +18,10 @@ def preprocess(ds="maharshipandya/spotify-tracks-dataset"):
     X_preproc = preprocess_features(X)
 
     return X_preproc
+
+def find_neighbors(X_pred: pd.Dataframe = None):
+    
+
 
 
 if __name__ == '__main__':
