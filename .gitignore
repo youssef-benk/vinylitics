@@ -47,5 +47,4 @@ secrets.toml
 # Complete to your desire
 
 *.ipynb
-
-
+.cache
