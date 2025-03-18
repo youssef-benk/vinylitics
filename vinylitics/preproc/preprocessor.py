@@ -4,6 +4,8 @@ from sklearn.pipeline import make_pipeline, Pipeline
 from sklearn.compose import make_column_transformer
 from vinylitics.params import *
 from vinylitics.preproc import data
+from sklearn.decomposition import PCA
+from colorama import Fore, Style
 
 def preprocess_features(X:pd.DataFrame):
     '''
@@ -40,3 +42,15 @@ def preprocess_features(X:pd.DataFrame):
 
     return X_preproc
 
+def pca_proj(X, X_train_preproc):
+    """
+        - fit a PCA on the train dataset
+        - reproject the first argument with the fitted PCA
+    """
+    print(Fore.MAGENTA + "\n ⭐️ Use case: PCA projection" + Style.RESET_ALL)
+    pca = PCA()
+    pca.fit(X_train_preproc)
+    X_proj = pca.transform(X_proj)
+    print("✅ X_proj, with shape", X_proj.shape)
+
+    return X_proj
