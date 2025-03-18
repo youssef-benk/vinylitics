@@ -2,6 +2,7 @@ import pandas as pd
 from sklearn.preprocessing import RobustScaler, OneHotEncoder
 from sklearn.pipeline import make_pipeline, Pipeline
 from sklearn.compose import make_column_transformer
+from vinylitics.params import *
 
 
 def preprocess_features(X:pd.DataFrame):
@@ -10,9 +11,14 @@ def preprocess_features(X:pd.DataFrame):
     '''
     # Define the columns to keep
     cat_col = ['key', 'mode', 'time_signature']
+
     num_col = ['duration_ms', 'danceability', 'energy','loudness',
        'speechiness', 'acousticness', 'instrumentalness', 'liveness',
        'valence', 'tempo']
+
+    X = X[KEEP_COLUMNS]
+
+
     def create_sklearn_preprocessor():
         '''Scikit-learn pipeline that transforms a cleaned dataset of shape (_, 7)
         into a preprocessed one of fixed shape (_, 28).'''
