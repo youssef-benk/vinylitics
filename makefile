@@ -1,3 +1,8 @@
+#################### PACKAGE ACTIONS ###################
+run_api:
+	uvicorn vinylitics.api.fast:app --reload
+
+
 # In case you are using an Apple Silicon, before pushing on the cloud:
 
 docker_build_local:

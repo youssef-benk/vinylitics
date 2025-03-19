@@ -15,7 +15,7 @@ app.add_middleware(
 @app.get('/')
 def root():
     response = {
-        'greeting': 'Welcome to virtualenv',
+        'greeting': 'Welcome to Vynilitics API',
     }
 
     return response
