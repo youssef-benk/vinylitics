@@ -46,5 +46,9 @@ secrets.toml
 # User defined extras
 # Complete to your desire
 
+<<<<<<< HEAD
 *.ipynb
 .cache
+=======
+#*.ipynb
+>>>>>>> master
