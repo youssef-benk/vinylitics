@@ -1,5 +1,6 @@
 import pandas as pd
 from datasets import load_dataset
+from pathlib import Path
 
 
 
@@ -8,18 +9,15 @@ def basic_cleaning(sentence):
         return sentence.lower().strip()
     return sentence
 
-def load_and_clean_data(dataset_name="maharshipandya/spotify-tracks-dataset"):
-    """Loads the dataset from Hugging Face and cleans it."""
-    # Load dataset
-    ds = load_dataset(dataset_name)
-    df = ds['train'].to_pandas()
+def clean_data(df: pd.DataFrame) -> pd.DataFrame:
+    """Cleans the dataset."""
 
     # Create a copy to avoid modifying the original dataset
     df_cleaned = df.copy()
 
     # Remove unnecessary columns
-    drop_columns = ["Unnamed: 0", "track_id", "album_name"]
-    df_cleaned.drop(columns=[col for col in drop_columns if col in df_cleaned.columns], errors="ignore", inplace=True)
+    drop_columns = ["Unnamed: 0", "track_id", "album_name", 'track_genre']
+    df_cleaned.drop(columns=drop_columns, errors="ignore", inplace=True)
 
     # Drop missing values
     df_cleaned.dropna(inplace=True)
@@ -38,4 +36,25 @@ def load_and_clean_data(dataset_name="maharshipandya/spotify-tracks-dataset"):
 
     return df_cleaned
 
-# comment #comment
+def load_data(dataset_name="maharshipandya/spotify-tracks-dataset"):
+    """Loads the dataset from Hugging Face."""
+    # Load dataset
+    ds = load_dataset(dataset_name)
+    df = ds['train'].to_pandas()
+
+    return df
+
+def get_data_with_cache(
+    ds_link: str,
+    cache_path:Path) -> pd.DataFrame:
+    """Loads the dataset from Hugging Face or from local cache if the file exists."""
+    if cache_path.is_file():
+        print("📚 Loading data from cache")
+        df = pd.read_csv(cache_path)
+
+    else:
+        print("🚀 Loading data from Hugging Face")
+        df = load_data(ds_link)
+        df.to_csv(cache_path.joinpath(f"{ds_link}.csv"), index=True)
+
+    return df
