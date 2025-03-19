@@ -3,6 +3,7 @@ import pandas as pd
 from sklearn.decomposition import PCA
 import dill
 from sklearn.pipeline import make_pipeline
+import os
 
 def neighbors_fit(
     X:pd.DataFrame,
@@ -46,10 +47,16 @@ def find_neighbors(X_pred:pd.DataFrame):
         pca (PCA, optional): fitted pca
     """
     # Load pca from the file using dill
+    if not "pca.dill" in os.listdir():
+        print(Fore.RED + "❌ The pca has not been fitted yet. Please run neighbors_fit first." + Style.RESET_ALL)
+        return None
     with open("pca.dill", "rb") as f:
         pca = dill.load(f)
 
     # Load model from the file using dill
+    if not "neighbors.dill" in os.listdir():
+        print(Fore.RED + "❌ The nearestneighbors has not been fitted yet. Please run neighbors_fit first." + Style.RESET_ALL)
+        return None
     with open("neighbors.dill", "rb") as f:
         neighbors = dill.load(f)
 
@@ -59,4 +66,3 @@ def find_neighbors(X_pred:pd.DataFrame):
     distances, indices = neighbors.kneighbors(X_proj)
     print("✅ Found neighbors")
     return distances, indices
-
