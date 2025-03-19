@@ -24,6 +24,8 @@ def fit_preprocessor(X:pd.DataFrame):
        'speechiness', 'acousticness', 'instrumentalness', 'liveness',
        'valence', 'tempo']
 
+    X = X[KEEP_COLUMNS]
+
     def create_sklearn_preprocessor():
         '''Scikit-learn pipeline that transforms a cleaned dataset of shape (_, 7)
         into a preprocessed one of fixed shape (_, 28).'''
