@@ -5,6 +5,7 @@ import dill
 from sklearn.pipeline import make_pipeline
 import os
 from vinylitics.params import *
+from colorama import Fore, Style
 
 
 def neighbors_fit(

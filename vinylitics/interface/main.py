@@ -1,11 +1,11 @@
 from vinylitics.params import *
-from vinylitics.preproc.data import load_and_clean_data
+from vinylitics.preproc.data import get_data_with_cache, clean_data, load_data
 from vinylitics.preproc.preprocessor import preprocess_features, fit_preprocessor
 from vinylitics.preproc.model import neighbors_fit
 from colorama import Fore, Style
 import pandas as pd
 from sklearn.neighbors import NearestNeighbors
-
+from pathlib import Path
 
 
 def preprocess(ds="maharshipandya/spotify-tracks-dataset"):
@@ -16,12 +16,15 @@ def preprocess(ds="maharshipandya/spotify-tracks-dataset"):
     """
     print(Fore.MAGENTA + "\n ⭐️ Use case: preprocess" + Style.RESET_ALL)
 
-    X = load_and_clean_data(ds)
+    data_cache_path = Path(LOCAL_DATA_PATH).joinpath(f"{ds}.csv")
 
-    if ds == "maharshipandya/spotify-tracks-dataset":
-        preproc_pipe, X_preproc = fit_preprocessor(X)
+    X = get_data_with_cache(ds, data_cache_path)
+    X_clean = clean_data(X)
+
+    if not "preproc.dill" in os.listdir():
+         X_preproc = fit_preprocessor(X_clean)
     else:
-        X_preproc = preprocess_features(X)
+        X_preproc = preprocess_features(X_clean)
 
     return X_preproc
 
@@ -32,7 +35,7 @@ def train(X:pd.DataFrame, n_neighbors:int=N_NEIGHBORS, algorithm:str='brute', me
     """
     print(Fore.MAGENTA + "\n ⭐️ Use case: train" + Style.RESET_ALL)
 
-    neighbors = neighbors_fit(X_preproc, n_neighbors=n_neighbors, algorithm=algorithm, metrics=metrics)
+    neighbors_fit(X_preproc, n_neighbors=n_neighbors, algorithm=algorithm, metrics=metrics)
 
     print("✅ train() done \n")
     return None
