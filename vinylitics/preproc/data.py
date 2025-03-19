@@ -8,7 +8,7 @@ def basic_cleaning(sentence):
         return sentence.lower().strip()
     return sentence
 
-def load_and_clean_data(dataset_name):
+def load_and_clean_data(dataset_name="maharshipandya/spotify-tracks-dataset"):
     """Loads the dataset from Hugging Face and cleans it."""
     # Load dataset
     ds = load_dataset(dataset_name)
