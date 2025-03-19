@@ -31,8 +31,8 @@ def load_and_clean_data(dataset_name):
     df_cleaned = df_cleaned[df_cleaned.popularity > 0]
 
     # Apply basic text cleaning to 'artists' and 'track_name' columns
-    df_cleaned['track_name'] = df_cleaned['track_name'].map(lambda x: basic_cleaning(x))
-    df_cleaned['artists'] = df_cleaned['artists'].map(lambda x: basic_cleaning(x))
+    df_cleaned['track_name'] = df_cleaned['track_name'].apply(basic_cleaning)
+    df_cleaned['artists'] = df_cleaned['artists'].apply(basic_cleaning)
 
     print("✅ data cleaned")
 
