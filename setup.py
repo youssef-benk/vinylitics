@@ -7,7 +7,7 @@ requirements = [x.strip() for x in content if "git+" not in x]
 
 setup(name='vinylitics',
       version="0.0.12",
-      description="TaxiFare Model (api_pred)",
+      description="Vinylitics Model (api_pred)",
       license="MIT",
       author="Le Wagon",
       author_email="contact@lewagon.org",
