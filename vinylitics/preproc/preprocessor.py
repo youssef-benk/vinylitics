@@ -18,9 +18,9 @@ def fit_preprocessor(X:pd.DataFrame):
         Pipeline: A fitted preprocessing pipeline.
   """
         # Define the columns to keep
-    cat_col = ['key', 'mode', 'time_signature']
+    cat_col = ['key', 'mode']
 
-    num_col = ['duration_ms', 'danceability', 'energy','loudness',
+    num_col = ['danceability', 'energy','loudness',
        'speechiness', 'acousticness', 'instrumentalness', 'liveness',
        'valence', 'tempo']
 
@@ -37,7 +37,7 @@ def fit_preprocessor(X:pd.DataFrame):
         preproc = make_column_transformer(
             (num_preproc, num_col),
             (cat_preproc, cat_col),
-            remainder='drop'
+            remainder='passthrough'
         )
         preproc_pipe = make_pipeline(preproc)
         return preproc_pipe

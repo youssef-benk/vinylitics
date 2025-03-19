@@ -1,5 +1,5 @@
 from vinylitics.params import *
-from vinylitics.preproc.data import get_data_with_cache, clean_data, load_data
+from vinylitics.preproc.data import clean_data, load_data
 from vinylitics.preproc.preprocessor import preprocess_features, fit_preprocessor
 from vinylitics.preproc.model import neighbors_fit
 from colorama import Fore, Style
@@ -8,7 +8,7 @@ from sklearn.neighbors import NearestNeighbors
 from pathlib import Path
 
 
-def preprocess(ds="maharshipandya/spotify-tracks-dataset"):
+def preprocess(ds="dataframe_2"):
     """
     - Query the spotify dataset from HuggingFace
         maharshipandya/spotify-tracks-dataset
@@ -16,9 +16,7 @@ def preprocess(ds="maharshipandya/spotify-tracks-dataset"):
     """
     print(Fore.MAGENTA + "\n ⭐️ Use case: preprocess" + Style.RESET_ALL)
 
-    data_cache_path = Path(LOCAL_DATA_PATH).joinpath(f"{ds}.csv")
-
-    X = get_data_with_cache(ds, data_cache_path)
+    X = load_data(ds)
     X_clean = clean_data(X)
 
     if not "preproc.dill" in os.listdir():
