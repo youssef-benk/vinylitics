@@ -7,7 +7,7 @@ from sklearn.pipeline import make_pipeline
 def neighbors_fit(
     X:pd.DataFrame,
     n_neighbors:int=5,
-    algorithm:str='ball_tree',
+    algorithm:str='brute',
     metrics:str='cosine'):
     """Fit the nearest neighbors on the preprocessd data
 
