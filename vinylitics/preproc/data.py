@@ -33,7 +33,7 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     df_cleaned['track_name'] = df_cleaned['track_name'].apply(basic_cleaning)
     df_cleaned['artists'] = df_cleaned['artists'].apply(basic_cleaning)
 
-    print("✅ data cleaned")
+    print("🧹 data cleaned")
 
     return df_cleaned
 
@@ -42,5 +42,5 @@ def load_data(dataset_name="dataframe_2") -> pd.DataFrame:
     # Load dataset
     data_path = Path(LOCAL_DATA_PATH).joinpath(f"{dataset_name}.csv")
     df = pd.read_csv(data_path)
-    print("✅ data loaded")
+    print("🚀 data loaded")
     return df
