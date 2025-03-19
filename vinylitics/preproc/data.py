@@ -20,9 +20,6 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     drop_columns = ["Unnamed: 0", "track_id", "album_name", 'track_genre', 'year', 'Unnamed: 0.1']
     df_cleaned.drop(columns=drop_columns, errors="ignore", inplace=True)
 
-    # Drop missing values
-    df_cleaned.dropna(inplace=True)
-
     # Remove invalid tempo and time_signature values
     df_cleaned = df_cleaned[(df_cleaned.tempo > 0)]
 
@@ -33,7 +30,7 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     df_cleaned['track_name'] = df_cleaned['track_name'].apply(basic_cleaning)
     df_cleaned['artists'] = df_cleaned['artists'].apply(basic_cleaning)
 
-    print("🧹 data cleaned")
+    print("🧹 data cleaned, with shape ", df_cleaned.shape)
 
     return df_cleaned
 
@@ -42,5 +39,5 @@ def load_data(dataset_name="dataframe_2") -> pd.DataFrame:
     # Load dataset
     data_path = Path(LOCAL_DATA_PATH).joinpath(f"{dataset_name}.csv")
     df = pd.read_csv(data_path)
-    print("🚀 data loaded")
+    print("🚀 data loaded, with shape ", df.shape)
     return df
