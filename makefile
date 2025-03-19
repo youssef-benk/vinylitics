@@ -1,7 +1,9 @@
 #################### PACKAGE ACTIONS ###################
 run_api:
 	uvicorn vinylitics.api.fast:app --reload
-
+reinstall_package:
+	@pip uninstall -y vinylitics || :
+	@pip install -e .
 
 # In case you are using an Apple Silicon, before pushing on the cloud:
 
