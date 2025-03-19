@@ -1,6 +1,6 @@
 #################### PACKAGE ACTIONS ###################
 run_api:
-	uvicorn taxifare.api.fast:app --reload
+	uvicorn vinylitics.api.fast:app --reload
 
 
 # In case you are using an Apple Silicon, before pushing on the cloud:
