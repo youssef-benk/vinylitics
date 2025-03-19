@@ -16,20 +16,11 @@ def recommend_track(track_name, artist):
 
     track_preproc = preprocess_features(selected_track)
 
-    with open("preproc_pipe.dill", "rb") as f:
-        preproc_pipe = dill.load(f)
-    with open("neighbors.dill", "rb") as f:
-        neighbors = dill.load(f)
-    with open("pca.dill", "rb") as f:
-        pca = dill.load(f)
+    find_neighbors(track_preproc)
+    distances, indices = find_neighbors(track_preproc)
 
-    track_preproc = preproc_pipe.transform(track_preproc)
-    track_preproc = pca.transform(track_preproc)
-
-
-    # neighbors = find_neighbors(track_preproc, model, pca)
-    print(neighbors)
-
-    return None
+    result = df.iloc[indices[0][1:]].sort_values(by='popularity', ascending=False)
+    print(result)
+    return result
 
 recommend_track("Shape of You", "Ed Sheeran")
