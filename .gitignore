@@ -39,6 +39,7 @@ models/
 *.pickle
 *.pckl
 *.pkl
+*.dill
 
 # Credentials (or files with potentially credentials inside)
 .env

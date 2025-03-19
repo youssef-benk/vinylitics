@@ -37,7 +37,7 @@ def fit_preprocessor(X:pd.DataFrame):
         preproc = make_column_transformer(
             (num_preproc, num_col),
             (cat_preproc, cat_col),
-            remainder='passthrough'
+            remainder='drop'
         )
         preproc_pipe = make_pipeline(preproc)
         return preproc_pipe
