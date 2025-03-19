@@ -26,7 +26,7 @@ def preprocess(ds="maharshipandya/spotify-tracks-dataset"):
     return X_preproc
 
 
-def train(X:pd.DataFrame, n_neighbors:int=5, algorithm:str='brute', metrics:str='cosine'):
+def train(X:pd.DataFrame, n_neighbors:int=N_NEIGHBORS, algorithm:str='brute', metrics:str='cosine'):
     """
     - Train the nearest neighbors model
     """

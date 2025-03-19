@@ -17,7 +17,11 @@
 *.vscode
 
 # Raw data
-raw_data/
+raw_data_fma/
+raw_data_msd/
+raw_data_youtube/
+notebooks/
+lyrics/
 *.csv
 *.sqlite
 *.zip
@@ -46,4 +50,5 @@ secrets.toml
 # User defined extras
 # Complete to your desire
 
-#*.ipynb
+*.ipynb
+api_key.text
