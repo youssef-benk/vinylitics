@@ -15,9 +15,11 @@ def recommend_track(track_name, artist):
 
     track_preproc = preprocess_features(selected_track)
 
-    pca, model = neighbors_fit(df)
+    df_preproc = preprocess_features(df)
+    pca, model = neighbors_fit(df_preproc)
+
     neighbors = find_neighbors(track_preproc, model, pca)
-    print (neighbors)
+    print(neighbors)
 
     return None
 
