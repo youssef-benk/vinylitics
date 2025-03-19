@@ -14,31 +14,27 @@ def preprocess(ds="dataframe_2"):
         maharshipandya/spotify-tracks-dataset
     - Preprocess the data
     """
-    print(Fore.MAGENTA + "\n ⭐️ Use case: preprocess" + Style.RESET_ALL)
-
+    print(Fore.MAGENTA + "\n :star:️ Use case: preprocess" + Style.RESET_ALL)
     X = load_data(ds)
     X_clean = clean_data(X)
 
     if not "preproc.dill" in os.listdir():
-         X_preproc = fit_preprocessor(X_clean)
+        preproc_pipe, X_preproc = fit_preprocessor(X_clean)
     else:
         X_preproc = preprocess_features(X_clean)
-
     return X_preproc
-
 
 def train(X:pd.DataFrame, n_neighbors:int=N_NEIGHBORS, algorithm:str='brute', metrics:str='cosine'):
     """
     - Train the nearest neighbors model
     """
-    print(Fore.MAGENTA + "\n ⭐️ Use case: train" + Style.RESET_ALL)
-
-    neighbors_fit(X_preproc, n_neighbors=n_neighbors, algorithm=algorithm, metrics=metrics)
-
+    print(Fore.MAGENTA + "\n :star:️ Use case: train" + Style.RESET_ALL)
+    neighbors_fit(X, n_neighbors=n_neighbors, algorithm=algorithm, metrics=metrics)
     print("✅ train() done \n")
     return None
 
 
 if __name__ == '__main__':
     X_preproc= preprocess()
+    train(X_preproc, n_neighbors=10, algorithm='brute', metrics='cosine')
     train(X_preproc)
