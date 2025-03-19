@@ -3,11 +3,13 @@ import pandas as pd
 from sklearn.decomposition import PCA
 import dill
 from sklearn.pipeline import make_pipeline
-import os
+
+from vinylitics.params import *
+
 
 def neighbors_fit(
     X:pd.DataFrame,
-    n_neighbors:int=5,
+    n_neighbors:int=N_NEIGHBORS,
     algorithm:str='brute',
     metrics:str='cosine'):
     """Fit the nearest neighbors on the preprocessd data
