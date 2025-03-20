@@ -47,7 +47,9 @@ def recommend_track(track_name, artist):
     distances, indices = find_neighbors(track_preproc)
 
     result = df.iloc[indices[0][1:]].sort_values(by='popularity', ascending=True)
-    print(result)
+
     return result
 
+
 recommend_track("wut du u meen?", "Justen Beberr")
+
