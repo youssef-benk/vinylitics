@@ -5,6 +5,11 @@ reinstall_package:
 	@pip uninstall -y vinylitics || :
 	@pip install -e .
 
+run_main:
+	python vinylitics/interface/main.py
+
+run_recommender:
+	python vinylitics/preproc/recommender.py
 # In case you are using an Apple Silicon, before pushing on the cloud:
 
 docker_build_local:
