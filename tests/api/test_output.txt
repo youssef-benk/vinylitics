@@ -1,0 +1,27 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.10.6, pytest-8.3.5, pluggy-1.5.0 -- /Users/sbeasse/.pyenv/versions/3.10.6/envs/taxifare-env/bin/python
+cachedir: .pytest_cache
+plugins: time-machine-2.16.0, asyncio-0.25.3, anyio-3.7.1
+asyncio: mode=strict, asyncio_default_fixture_loop_scope=None
+collecting ... collected 18 items
+
+tests/api/test_cloud_endpoints.py::test_root_is_up PASSED                [  5%]
+tests/api/test_cloud_endpoints.py::test_root_returns_greeting PASSED     [ 11%]
+tests/api/test_cloud_endpoints.py::test_predict_is_up PASSED             [ 16%]
+tests/api/test_cloud_endpoints.py::test_predict_is_dict PASSED           [ 22%]
+tests/api/test_cloud_endpoints.py::test_predict_has_key PASSED           [ 27%]
+tests/api/test_cloud_endpoints.py::test_cloud_api_predict PASSED         [ 33%]
+tests/api/test_docker_endpoints.py::test_root_is_up PASSED               [ 38%]
+tests/api/test_docker_endpoints.py::test_root_returns_greeting PASSED    [ 44%]
+tests/api/test_docker_endpoints.py::test_predict_is_up PASSED            [ 50%]
+tests/api/test_docker_endpoints.py::test_predict_is_dict PASSED          [ 55%]
+tests/api/test_docker_endpoints.py::test_predict_has_key PASSED          [ 61%]
+tests/api/test_docker_endpoints.py::test_cloud_api_predict PASSED        [ 66%]
+tests/api/test_endpoints.py::test_root_is_up PASSED                      [ 72%]
+tests/api/test_endpoints.py::test_root_returns_greeting PASSED           [ 77%]
+tests/api/test_endpoints.py::test_predict_is_up PASSED                   [ 83%]
+tests/api/test_endpoints.py::test_predict_is_dict PASSED                 [ 88%]
+tests/api/test_endpoints.py::test_predict_has_key PASSED                 [ 94%]
+tests/api/test_endpoints.py::test_predict_val_is_float PASSED            [100%]
+
+====================== 18 passed, 110 warnings in 14.33s =======================
