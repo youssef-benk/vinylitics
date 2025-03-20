@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from vinylitics.preproc.recommender import recommend_track
 
 app = FastAPI()
 
@@ -19,3 +20,21 @@ def root():
     }
 
     return response
+
+@app.get("/predict_spotify")
+def predict_spotify(track_name: str, artist: str):
+    """_summary_
+
+    Args:
+        track_name (str): _description_
+        artist (str): _description_
+
+    Returns:
+        Hidden gems: similar but less popular songs from our Spotify dataset.
+    """
+    # Call the recommender function
+    result = recommend_track(track_name, artist)
+    if result is not None:
+        return {'result': result.to_dict()}
+    else:
+        return {"error": "Track not found"}
