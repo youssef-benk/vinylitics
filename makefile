@@ -10,6 +10,20 @@ run_main:
 
 run_recommender:
 	python vinylitics/preproc/recommender.py
+
+
+##################### TESTS #####################
+
+test_api_root:
+	pytest \
+	tests/api/test_endpoints.py::test_root_is_up --asyncio-mode=strict -W "ignore" \
+	tests/api/test_endpoints.py::test_root_returns_greeting --asyncio-mode=strict -W "ignore"
+
+test_api_predict:
+	pytest \
+	tests/api/test_endpoints.py::test_predict_is_up --asyncio-mode=strict -W "ignore" \
+
+
 # In case you are using an Apple Silicon, before pushing on the cloud:
 
 docker_build_local:
