@@ -26,7 +26,7 @@ def neighbors_fit(
     X_proj = pca.transform(X)
     print("✅ Fitted PCA model")
 
-        # Save transformer to a file using dill from your notebook
+    # Save transformer to a file using dill from your notebook
     with open("pca.dill", "wb") as f:
         dill.dump(pca, f)
     print("✅ Saved fitted PCA to pca.dill")
