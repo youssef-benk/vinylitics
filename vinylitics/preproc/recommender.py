@@ -1,9 +1,8 @@
 from vinylitics.preproc.data import load_data, clean_data
 from vinylitics.preproc.preprocessor import preprocess_features
 from vinylitics.preproc.model import find_neighbors
-import pandas as pd
 from vinylitics.params import *
-from pathlib import Path
+from thefuzz import process, fuzz
 
 
 def recommend_track(track_name, artist):
@@ -15,7 +14,7 @@ def recommend_track(track_name, artist):
     selected_track = df[(df['track_name'] == track_name) & (df['artists'] == artist)]
     if selected_track.empty:
         # Deploy fuzzy search if track not found
-        from thefuzz import process, fuzz
+
         # Combine track name and artist for fuzzy matching
         query = track_name + " " + artist
         # Create a list of combined strings for each track in the dataframe
@@ -47,8 +46,10 @@ def recommend_track(track_name, artist):
     distances, indices = find_neighbors(track_preproc)
 
     result = df.iloc[indices[0][1:]].sort_values(by='popularity', ascending=True)
-    print(result)
+    if __name__ == '__main__':
+        print(result)
     return result
 
 if __name__ == "__main__":
     recommend_track("wut du u meen?", "Justen Beberr")
+
