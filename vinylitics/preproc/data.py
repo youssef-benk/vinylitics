@@ -7,7 +7,7 @@ from vinylitics.params import LOCAL_DATA_PATH
 
 def basic_cleaning(sentence):
     if isinstance(sentence, str):
-        return sentence.lower().strip()
+        return sentence.lower().strip().strip('#')
     return sentence
 
 def clean_data(df: pd.DataFrame) -> pd.DataFrame:
