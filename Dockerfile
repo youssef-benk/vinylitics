@@ -1,33 +1,31 @@
 # syntax=docker/dockerfile:1
 
+# Use the official Python image as a parent image
 FROM python:3.10-slim
 
+# Set the working directory in the container
 WORKDIR /app
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
-    openssh-client \
     && rm -rf /var/lib/apt/lists/*
 
-# Setup SSH for GitHub
-RUN mkdir -p -m 0700 ~/.ssh && ssh-keyscan github.com >> ~/.ssh/known_hosts
-
-# Copy requirements file
+# Copy the requirements file into the container
 COPY requirements.txt .
 
 # Install Python dependencies
-RUN --mount=type=ssh pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the application code
+# Copy the application code into the container
 COPY vinylitics vinylitics
 
-# Create a non-root user and switch to it
+# Create a non-root user and switch to it for security
 RUN useradd -m appuser
 USER appuser
 
-# Expose the port the app runs on
+# Make port 8000 available to the world outside this container
 EXPOSE 8000
 
-# Command to run the API
+# Run the application when the container launches
 CMD ["uvicorn", "vinylitics.api.fast:app", "--host", "0.0.0.0", "--port", "${PORT:-8000}"]
