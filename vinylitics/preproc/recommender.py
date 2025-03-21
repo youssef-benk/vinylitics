@@ -50,5 +50,6 @@ def recommend_track(track_name, artist):
         print(result)
     return result
 
-if __name__ == '__main__':
-    recommend_track("these days", "nico")
+if __name__ == "__main__":
+    recommend_track("wut du u meen?", "Justen Beberr")
+
