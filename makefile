@@ -63,3 +63,12 @@ docker_interactive:
 
 docker_deploy:
 	gcloud run deploy --image ${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT}/${GAR_REPO}/${GAR_IMAGE}:prod --memory ${GAR_MEMORY} --region ${GCP_REGION}
+
+# Buckets and bigquery
+reset_bq_files:
+	-bq rm -f --project_id ${GCP_PROJECT} ${BQ_DATASET}.dataframe_2
+	-bq mk --sync --project_id ${GCP_PROJECT} --location=${BQ_REGION} ${BQ_DATASET}.dataframe_2
+
+reset_gcs_files:
+	-gsutil rm -r gs://${BUCKET_NAME}
+	-gsutil mb -p ${GCP_PROJECT} -l ${GCP_REGION} gs://${BUCKET_NAME}
