@@ -1,31 +1,33 @@
-# $DEL_BEGIN
+# syntax=docker/dockerfile:1
 
-# ####### 👇 SIMPLE SOLUTION (x86 and M1) 👇 ########
-# FROM python:3.10.6-buster
+FROM python:3.10-slim
 
-# WORKDIR /prod
+WORKDIR /app
 
-# COPY requirements.txt requirements.txt
-# RUN pip install -r --no-cache-dir requirements.txt
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git \
+    openssh-client \
+    && rm -rf /var/lib/apt/lists/*
 
-# COPY vinylitics vinylitics
+# Setup SSH for GitHub
+RUN mkdir -p -m 0700 ~/.ssh && ssh-keyscan github.com >> ~/.ssh/known_hosts
 
-# CMD uvicorn vinylitics.api.fast:app --host 0.0.0.0 --port $PORT
+# Copy requirements file
+COPY requirements.txt .
 
-####### 👇 OPTIMIZED SOLUTION (x86)👇 #######
+# Install Python dependencies
+RUN --mount=type=ssh pip install --no-cache-dir -r requirements.txt
 
-# tensorflow base-images are optimized: lighter than python-buster + pip install tensorflow
-# FROM tensorflow/tensorflow:2.10.0
-# OR for apple silicon, use this base image, but it's larger than python-buster + pip install tensorflow
-FROM armswdev/tensorflow-arm-neoverse:r22.09-tf-2.10.0-eigen
-
-WORKDIR /prod
-
-# We strip the requirements from useless packages like `ipykernel`, `matplotlib` etc...
-COPY requirements.txt requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
-
+# Copy the application code
 COPY vinylitics vinylitics
 
-CMD ["uvicorn", "vinylitics.api.fast:app", "--host", "0.0.0.0", "--port", "$PORT"]
-# $DEL_END
+# Create a non-root user and switch to it
+RUN useradd -m appuser
+USER appuser
+
+# Expose the port the app runs on
+EXPOSE 8000
+
+# Command to run the API
+CMD ["uvicorn", "vinylitics.api.fast:app", "--host", "0.0.0.0", "--port", "${PORT:-8000}"]
