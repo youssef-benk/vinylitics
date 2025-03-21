@@ -3,13 +3,12 @@ from vinylitics.preproc.preprocessor import preprocess_features
 from vinylitics.preproc.model import find_neighbors
 from vinylitics.params import *
 from thefuzz import process, fuzz
+import pandas as pd
 
 
-def recommend_track(track_name, artist):
+def recommend_track(track_name, artist, df:pd.DataFrame):
     track_name = track_name.lower().strip()
     artist = artist.lower().strip()
-    df = load_data()
-    df = clean_data(df)
 
     selected_track = df[(df['track_name'] == track_name) & (df['artists'] == artist)]
     if selected_track.empty:
@@ -48,8 +47,7 @@ def recommend_track(track_name, artist):
     result = df.iloc[indices[0][1:]].sort_values(by='popularity', ascending=True)
     if __name__ == '__main__':
         print(result)
-    return result
+    return result[['track_name', 'artists', 'track_id']]
 
 if __name__ == "__main__":
     recommend_track("wut du u meen?", "Justen Beberr")
-
