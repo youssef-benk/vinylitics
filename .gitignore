@@ -22,9 +22,13 @@ raw_data_msd/
 raw_data_youtube/
 notebooks/
 lyrics/
+raw_data/
 *.csv
 *.sqlite
 *.zip
+
+# sandboxes
+sandboxes/
 
 # Data in the package
 # Add files you want to include in the git repo using `git add -f file_name`

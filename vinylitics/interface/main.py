@@ -38,4 +38,5 @@ def train(X:pd.DataFrame, n_neighbors:int=N_NEIGHBORS, algorithm:str='brute', me
 if __name__ == '__main__':
     X_preproc= preprocess()
     train(X_preproc, n_neighbors=10, algorithm='brute', metrics='cosine')
-    recommend_track("Shape of you", "Ed Sheeran")
+    d = recommend_track("Shape of you", "Ed Sheeran")
+    print(d)
