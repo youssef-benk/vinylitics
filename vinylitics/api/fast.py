@@ -3,11 +3,22 @@ from fastapi.middleware.cors import CORSMiddleware
 from vinylitics.preproc.recommender import recommend_track
 from thefuzz import process, fuzz
 from vinylitics.preproc.data import load_data, clean_data
+from params import GCP_PROJECT, BQ_DATASET, DS
 
 app = FastAPI()
 
-app.state.df_og = load_data()
-app.state.df = clean_data(app.state.df_og)
+query_raw = f"""
+    SELECT *
+    FROM `{GCP_PROJECT}`.{BQ_DATASET}.{DS}_raw
+    """
+
+query_cleaned = f"""
+    SELECT *
+    FROM `{GCP_PROJECT}`.{BQ_DATASET}.{DS}_cleaned
+    """
+
+app.state.df_og = load_data(gcp_project=GCP_PROJECT, query=query_raw, dataset_name='dataframe_2')
+app.state.df = load_data(gcp_project=GCP_PROJECT, query=query_cleaned, dataset_name='dataframe_2')
 
 # Allowing all middleware is optional, but good practice for dev purposes
 app.add_middleware(
