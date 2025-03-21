@@ -22,6 +22,7 @@ raw_data_msd/
 raw_data_youtube/
 notebooks/
 lyrics/
+raw_data/
 *.csv
 *.sqlite
 *.zip
