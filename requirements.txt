@@ -9,7 +9,7 @@ python-dotenv
 colorama
 datasets
 dill
-git+ssh://git@github.com/seatgeek/thefuzz.git@0.19.0#egg=thefuzz
+thefuzz
 
 # API
 fastapi==0.108.0
