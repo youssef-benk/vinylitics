@@ -20,7 +20,7 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     df_cleaned = df.copy()
 
     # Remove unnecessary columns
-    drop_columns = ["Unnamed: 0", "album_name", 'track_genre', 'year', 'Unnamed: 0.1']
+    drop_columns = ["album_name", 'track_genre', 'year']
     df_cleaned.drop(columns=drop_columns, errors="ignore", inplace=True)
 
     # Remove invalid tempo and time_signature values
