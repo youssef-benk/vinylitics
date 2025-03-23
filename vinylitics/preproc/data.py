@@ -1,7 +1,7 @@
 import pandas as pd
 from datasets import load_dataset
 from pathlib import Path
-from vinylitics.params import LOCAL_DATA_PATH, COLUMN_NAMES_RAW
+from vinylitics.params import LOCAL_DATA_PATH, COLUMN_NAMES_RAW, LOCAL_DOCKER_PATH
 from colorama import Fore, Style
 from google.cloud import bigquery
 
@@ -42,7 +42,9 @@ def load_data(gcp_project:str,
               dataset_name:str = "dataframe_2") -> pd.DataFrame:
     """Loads the dataset from the given path."""
     # Load dataset
-    data_path = Path(LOCAL_DATA_PATH).joinpath(f"{dataset_name}.csv")
+    data_path_local = Path(LOCAL_DATA_PATH).joinpath(f"{dataset_name}.csv")
+    data_path_docker = Path(LOCAL_DOCKER_PATH).joinpath(f"{dataset_name}.csv")
+    data_path = data_path_local if data_path_local.is_file() else data_path_docker
 
     if data_path.is_file():
         print(Fore.BLUE + "\nLoad data from local CSV..." + Style.RESET_ALL)
@@ -50,10 +52,10 @@ def load_data(gcp_project:str,
         df = df[COLUMN_NAMES_RAW]
     else:
         print(Fore.BLUE + "\nLoad data from BigQuery..." + Style.RESET_ALL)
-        client = bigquery.Client(project=gcp_project)
-        query_job = client.query(query)
-        result = query_job.result()
-        df = result.to_dataframe()
+        # client = bigquery.Client(project=gcp_project)
+        # query_job = client.query(query)
+        # result = query_job.result()
+        # df = result.to_dataframe()
 
         # Store as CSV if the BQ query returned at least one valid line
         if df.shape[0] > 1:
