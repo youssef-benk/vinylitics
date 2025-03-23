@@ -1,8 +1,9 @@
 import os
+from pathlib import Path
 
 ##################  CONSTANTS  #####################
-LOCAL_DATA_PATH = os.path.join(os.path.expanduser('~'), "code", "youssef-benk", "vinylitics", "raw_data")
-LOCAL_REGISTRY_PATH =  os.path.join(os.path.expanduser('~'), "code", "youssef-benk", "vinylitics", "raw_data")
+LOCAL_DOCKER_PATH = Path("raw_data")
+LOCAL_DATA_PATH =  os.path.join(os.path.expanduser('~'), "code", "youssef-benk", "vinylitics", "raw_data")
 
 KEEP_COLUMNS = ['danceability', 'energy', 'key', 'loudness',
        'mode', 'speechiness', 'acousticness', 'instrumentalness', 'liveness',
