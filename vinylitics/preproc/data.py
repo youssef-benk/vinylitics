@@ -84,8 +84,8 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     ############################################
     # DO WE STILL NEED THIS AFTER RECOMMENDER? #
     ############################################
-    # df_cleaned['track_name'] = df_cleaned['track_name'].apply(basic_cleaning)
-    # df_cleaned['artists'] = df_cleaned['artists'].apply(basic_cleaning)
+    df_cleaned['track_name'] = df_cleaned['track_name'].apply(basic_cleaning)
+    df_cleaned['artists'] = df_cleaned['artists'].apply(basic_cleaning)
 
     print("🧹 data cleaned, with shape ", df_cleaned.shape)
     return df_cleaned
