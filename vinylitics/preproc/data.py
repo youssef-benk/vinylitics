@@ -46,10 +46,6 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     #########################################################################
     ### SIMPLER 'ONE HOT ENCODING' FOR GENRE                              ###
     #########################################################################
-
-    # Create a copy to avoid modifying the original dataset
-    df_cleaned = df.copy()
-
     # Compute mean values per genre for selected features
     genre_features = df_cleaned.groupby('track_genre')[['danceability', 'energy', 'valence']].mean()
 
@@ -92,7 +88,6 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     # df_cleaned['artists'] = df_cleaned['artists'].apply(basic_cleaning)
 
     print("🧹 data cleaned, with shape ", df_cleaned.shape)
-
     return df_cleaned
 
 def load_data(gcp_project:str,
