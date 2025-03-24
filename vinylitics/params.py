@@ -5,9 +5,13 @@ from pathlib import Path
 LOCAL_DOCKER_PATH = Path("raw_data")
 LOCAL_DATA_PATH =  os.path.join(os.path.expanduser('~'), "code", "youssef-benk", "vinylitics", "raw_data")
 
-KEEP_COLUMNS = ['danceability', 'energy', 'key', 'loudness',
-       'mode', 'speechiness', 'acousticness', 'instrumentalness', 'liveness',
-       'valence', 'tempo', 'popularity']
+KEEP_COLUMNS = [
+    'popularity', 'duration_ms', 'loudness', 'tempo',
+    'danceability', 'energy', 'speechiness', 'acousticness',
+    'instrumentalness', 'liveness', 'valence', 'genre_danceability',
+    'genre_energy', 'genre_valence', 'time_signature', 'mode',
+    'key_sin', 'key_cos'
+    ]
 
 ##################  VARIABLES  ##################
 SPOTIFY_CLIENT_ID = os.environ.get("SPOTIFY_CLIENT_ID")

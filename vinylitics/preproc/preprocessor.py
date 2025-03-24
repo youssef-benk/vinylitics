@@ -1,5 +1,5 @@
 import pandas as pd
-from sklearn.preprocessing import RobustScaler, OneHotEncoder
+from sklearn.preprocessing import RobustScaler, OneHotEncoder, MinMaxScaler
 from sklearn.pipeline import make_pipeline, Pipeline
 from sklearn.compose import make_column_transformer
 from vinylitics.params import *
@@ -17,32 +17,49 @@ def fit_preprocessor(X:pd.DataFrame):
     Returns:
         Pipeline: A fitted preprocessing pipeline.
   """
-        # Define the columns to keep
-    cat_col = ['key', 'mode']
 
-    num_col = ['danceability', 'energy','loudness',
-       'speechiness', 'acousticness', 'instrumentalness', 'liveness',
-       'valence', 'tempo']
+    # select feature groups
+    continuous_features = ['popularity', 'duration_ms', 'loudness', 'tempo']
+    bounded_features = [
+        'danceability', 'energy', 'speechiness'
+        , 'acousticness', 'instrumentalness', 'liveness'
+        , 'valence', 'genre_danceability', 'genre_energy'
+        , 'genre_valence'
+        ]
+    categorical_features = ['time_signature', 'mode']
 
     X = X[KEEP_COLUMNS]
 
     def create_sklearn_preprocessor():
         '''Scikit-learn pipeline that transforms a cleaned dataset of shape (_, 7)
         into a preprocessed one of fixed shape (_, 28).'''
-        num_preproc = Pipeline([
-            ("scaler", RobustScaler())])
-        cat_preproc = Pipeline([
+        continuous_preproc = Pipeline([
+            ("continuous_scaler", RobustScaler())
+            ])
+
+        bounded_preproc = Pipeline([
+            ("bounded_scaler", MinMaxScaler())
+            ])
+
+        categorical_preproc = Pipeline([
             ("ohe", OneHotEncoder(handle_unknown="ignore",
                                   sparse_output=False))])
+
         preproc = make_column_transformer(
-            (num_preproc, num_col),
-            (cat_preproc, cat_col),
-            remainder='drop'
+            (continuous_preproc, continuous_features)
+            , (bounded_preproc, bounded_features)
+            , (categorical_preproc, categorical_features)
+            , remainder='passthrough'
         )
+
         preproc_pipe = make_pipeline(preproc)
+
         return preproc_pipe
+
     preproc_pipe = create_sklearn_preprocessor()
     X_preproc = preproc_pipe.fit_transform(X)
+    X_preproc = pd.DataFrame.from_records(X_preproc)
+    X_preproc = X_preproc.dropna()
     print("✅ Preprocessing pipeline fitted and X_preprocessed, with shape", X_preproc.shape)
 
     # Save transformer to a file using dill from your notebook
