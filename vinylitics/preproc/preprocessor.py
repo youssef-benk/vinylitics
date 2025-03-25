@@ -19,14 +19,13 @@ def fit_preprocessor(X:pd.DataFrame):
   """
 
     # select feature groups
-    continuous_features = ['popularity', 'duration_ms', 'loudness', 'tempo']
+    continuous_features = [  'tempo']#'loudness', 'popularity', 'duration_ms'
     bounded_features = [
         'danceability', 'energy', 'speechiness'
         , 'acousticness', 'instrumentalness', 'liveness'
-        , 'valence', 'genre_danceability', 'genre_energy'
-        , 'genre_valence'
-        ]
-    categorical_features = ['time_signature', 'mode']
+        , 'valence'
+        ] # 'genre_danceability', 'genre_energy', 'genre_valence'
+    categorical_features = [] #'mode', 'time_signature' 
 
     X = X[KEEP_COLUMNS]
 
