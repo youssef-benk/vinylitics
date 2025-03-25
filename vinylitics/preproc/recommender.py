@@ -50,11 +50,11 @@ def recommend_track(track_name, artist, df:pd.DataFrame):
     distances, indices = find_neighbors(track_preproc)
 
     result = df.iloc[indices[0][1:]].sort_values(by='popularity', ascending=True)
-    print(result)
+    # print(result)
     if __name__ == '__main__':
         print(result)
     return result[['track_name', 'artists', 'track_id', 'popularity', 'tempo', 'danceability', 'energy', 'speechiness', 'acousticness',
-    'instrumentalness', 'liveness', 'valence']]
+    'instrumentalness', 'liveness', 'valence']], selected_track
 
 if __name__ == "__main__":
     recommend_track("Sacred Cycles?", "Pete Lazonby")

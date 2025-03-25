@@ -68,8 +68,9 @@ def predict_spotify(track_name: str, artist: str):
         Hidden gems: similar but less popular songs from our Spotify dataset.
     """
     # Call the recommender function
-    result = recommend_track(track_name, artist, app.state.df)
+    result, selected_track = recommend_track(track_name, artist, app.state.df)
     if result is not None:
-        return {'result': result.to_dict()}
+        return {'result': result.to_dict(),
+                'sel_track': selected_track.to_dict()}
     else:
         return {"error": "Track not found"}
