@@ -48,7 +48,8 @@ def recommend_track(track_name, artist, df:pd.DataFrame):
     print(result)
     if __name__ == '__main__':
         print(result)
-    return result[['track_name', 'artists', 'track_id']]
+    return result[['track_name', 'artists', 'track_id', 'poularity', 'tempo', 'danceability', 'energy', 'speechiness', 'acousticness',
+    'instrumentalness', 'liveness', 'valence']]
 
 if __name__ == "__main__":
     recommend_track("wut du u meen?", "Justen Beberr")
