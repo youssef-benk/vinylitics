@@ -51,7 +51,7 @@ def preprocess(ds="dataframe_2", load_to_bq=False):
         X_preproc = preprocess_features(X_clean)
     return X_preproc
 
-def train(X:pd.DataFrame, n_neighbors:int=N_NEIGHBORS, algorithm:str='brute', metrics:str='cosine'):
+def train(X:pd.DataFrame, n_neighbors:int=N_NEIGHBORS, algorithm:str='KD', metrics:str='cosine'):
     """
     - Train the nearest neighbors model
     """
@@ -62,7 +62,6 @@ def train(X:pd.DataFrame, n_neighbors:int=N_NEIGHBORS, algorithm:str='brute', me
 
 
 if __name__ == '__main__':
-    X_preproc= preprocess()
-    train(X_preproc, n_neighbors=10, algorithm='brute', metrics='cosine')
-    # d = recommend_track("Shape of you", "Ed Sheeran")
-    # print(d)
+    # X_preproc= preprocess()
+    # train(X_preproc, n_neighbors=10, algorithm='auto', metrics='cosine')
+    recommend_track("Do I wanna know", "Arctic Monkeys", clean_data(pd.read_csv('./raw_data/dataframe_2.csv')))

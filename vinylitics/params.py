@@ -6,12 +6,10 @@ LOCAL_DOCKER_PATH = Path("raw_data")
 LOCAL_DATA_PATH =  os.path.join(os.path.expanduser('~'), "code", "youssef-benk", "vinylitics", "raw_data")
 
 KEEP_COLUMNS = [
-    'popularity', 'duration_ms', 'loudness', 'tempo',
+      'tempo',
     'danceability', 'energy', 'speechiness', 'acousticness',
-    'instrumentalness', 'liveness', 'valence', 'genre_danceability',
-    'genre_energy', 'genre_valence', 'time_signature', 'mode',
-    'key_sin', 'key_cos'
-    ]
+    'instrumentalness', 'liveness', 'valence'
+    ] #'loudness', 'genre_danceability', 'genre_energy', 'genre_valence','mode','key_sin', 'key_cos', 'popularity', 'duration_ms', ,  'time_signature'
 
 ##################  VARIABLES  ##################
 SPOTIFY_CLIENT_ID = os.environ.get("SPOTIFY_CLIENT_ID")

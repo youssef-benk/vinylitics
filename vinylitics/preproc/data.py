@@ -40,24 +40,24 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     # Fill categorical values with most frequent (mode)
     df_cleaned['time_signature'].fillna(df_cleaned['time_signature'].mode()[0], inplace=True)
 
-    # Fill missing track_genre with "Unknown"
-    df_cleaned['track_genre'].fillna("Unknown", inplace=True)
+    # # Fill missing track_genre with "Unknown"
+    # df_cleaned['track_genre'].fillna("Unknown", inplace=True)
 
     #########################################################################
     ### SIMPLER 'ONE HOT ENCODING' FOR GENRE                              ###
     #########################################################################
-    # Compute mean values per genre for selected features
-    genre_features = df_cleaned.groupby('track_genre')[['danceability', 'energy', 'valence']].mean()
+    # # Compute mean values per genre for selected features
+    # genre_features = df_cleaned.groupby('track_genre')[['danceability', 'energy', 'valence']].mean()
 
-    # Rename columns to prevent merge conflicts
-    genre_features.rename(columns={
-        'danceability': 'genre_danceability',
-        'energy': 'genre_energy',
-        'valence': 'genre_valence'
-    }, inplace=True)
+    # # Rename columns to prevent merge conflicts
+    # genre_features.rename(columns={
+    #     'danceability': 'genre_danceability',
+    #     'energy': 'genre_energy',
+    #     'valence': 'genre_valence'
+    # }, inplace=True)
 
     # Merge genre-based feature averages back into the dataset
-    df_cleaned = df_cleaned.merge(genre_features, on='track_genre', how='left')
+    # df_cleaned = df_cleaned.merge(genre_features, on='track_genre', how='left')
 
     # Drop original 'track_genre' and the original numeric columns
     df_cleaned.drop(columns=['track_genre'], inplace=True)
@@ -76,8 +76,8 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
 
     # transform 'key' (cyclical feature) into sine and cosine components and drop original one
 
-    df_cleaned['key_sin'] = np.sin(2 * np.pi * df_cleaned['key'] / 12)
-    df_cleaned['key_cos'] = np.cos(2 * np.pi * df_cleaned['key'] / 12)
+    # df_cleaned['key_sin'] = np.sin(2 * np.pi * df_cleaned['key'] / 12)
+    # df_cleaned['key_cos'] = np.cos(2 * np.pi * df_cleaned['key'] / 12)
     df_cleaned.drop(columns=['key'], inplace=True)
 
     # Apply basic text cleaning to 'artists' and 'track_name' columns
