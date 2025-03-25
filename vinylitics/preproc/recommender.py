@@ -4,11 +4,16 @@ from vinylitics.preproc.model import find_neighbors
 from vinylitics.params import *
 from thefuzz import process, fuzz
 import pandas as pd
+from vinylitics.preproc.data import load_data
 
+if __name__ == '__main__':
+        df = load_data()
 
 def recommend_track(track_name, artist, df:pd.DataFrame):
     track_name = track_name.lower().strip()
     artist = artist.lower().strip()
+
+
 
     selected_track = df[(df['track_name'] == track_name) & (df['artists'] == artist)]
     if selected_track.empty:
@@ -50,4 +55,4 @@ def recommend_track(track_name, artist, df:pd.DataFrame):
     return result[['track_name', 'artists', 'track_id']]
 
 if __name__ == "__main__":
-    recommend_track("wut du u meen?", "Justen Beberr")
+    recommend_track("Sacred Cycles?", "Pete Lazonby")
