@@ -237,20 +237,11 @@ def predict_high_features(mp3_path: str) -> pd.DataFrame:
     df_high = pd.DataFrame(final_data, columns=final_columns)
     return df_high
 
-def translate_low_high(mp3_path: str) -> pd.DataFrame:
-    """
-    Wrapper function that performs the full low-to-high feature translation.
-    Given an mp3 file path, it extracts low-level features, preprocesses them, predicts high-level
-    features using the saved TensorFlow model, computes tempo directly from the audio, and returns
-    a final DataFrame with the eight high-level features.
-    """
-    return predict_high_features(mp3_path)
-
 # For testing:
 if __name__ == '__main__':
     test_mp3_path = "/Users/adviti/code/youssef-benk/vinylitics/The Weeknd - Blinding Lights (Official Audio).mp3"
     print("Extracting high-level features for:", test_mp3_path)
-    df_high = translate_low_high(test_mp3_path)
+    df_high = predict_high_features(test_mp3_path)
     print("Predicted high-level features:")
     print(df_high)
     # Optionally, export the final DataFrame to CSV for debugging:
