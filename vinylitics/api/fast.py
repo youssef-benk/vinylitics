@@ -48,7 +48,7 @@ def fuzzy_search(track_name: str, artist: str):
         # Combine track name and artist for fuzzy matching
         query = track_name + " " + artist
         # Create a list of combined strings for each track in the dataframe
-        choices = (app.state.df_og['track_name'] + " - " + app.state.df_og['artists']).tolist()
+        choices = (app.state.df_og['track_name'] + " by " + app.state.df_og['artists']).tolist()
         # Get the top 3 matches
         return {"result": "No exact match found", "choices": process.extract(query, choices, limit=3, scorer=fuzz.token_set_ratio)}
     else:
