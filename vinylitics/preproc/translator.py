@@ -289,7 +289,7 @@ def predict_high_features(mp3_path: str) -> pd.DataFrame:
     try:
         y_audio, sr = librosa.load(mp3_path, sr=None, mono=True)
         tempo, _ = librosa.beat.beat_track(y=y_audio, sr=sr)
-        tempo = tempo * 2  # half-time adjustment
+        tempo = tempo #* 2  half-time adjustment
         if __name__ == '__main__':
             print(f"Computed tempo from audio: {tempo}")
     except Exception as e:

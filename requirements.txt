@@ -17,7 +17,8 @@ googleapis-common-protos==1.56.4
 librosa
 yt-dlp
 tensorflow
-
+ffmpeg
+ffprobe
 
 # API
 fastapi==0.108.0

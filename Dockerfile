@@ -29,8 +29,14 @@ COPY requirements.txt requirements.txt
 
 # Install Python dependencies
 RUN pip install --upgrade pip
+RUN apt-get -y update
+RUN apt-get -y upgrade
+RUN apt-get install -y ffmpeg
+
 RUN pip install --no-cache-dir -r requirements.txt
+# RUN apt-get install -y ffprobe
 RUN pip install -e .
+
 
 # # Create a non-root user and switch to it for security
 # RUN useradd -m appuser
