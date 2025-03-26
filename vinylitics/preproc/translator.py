@@ -175,8 +175,6 @@ def predict_high_features(mp3_path: str) -> pd.DataFrame:
         scaler_low = dill.load(f)
     with open(PCA_PATH, "rb") as f:
         pca_low = dill.load(f)
-    with open(SCALER_Y_PATH, "rb") as f:
-        scaler_y = dill.load(f)
     model = tf.keras.models.load_model(MODEL_PATH)
 
     try:
@@ -195,25 +193,77 @@ def predict_high_features(mp3_path: str) -> pd.DataFrame:
         print("Error during PCA transformation:", e)
         return pd.DataFrame()
 
-    try:
-        y_pred_scaled = model.predict(X_pca)
-        print("Scaled predictions:", y_pred_scaled)
-        y_pred = scaler_y.inverse_transform(y_pred_scaled)
-        # The model was trained to predict 7 high-level features in this order:
-        # ["Acousticness", "Danceability", "Energy", "Instrumentalness", "Liveness", "Speechiness", "Valence"]
-        df_pred = pd.DataFrame(y_pred, columns=["Acousticness", "Danceability", "Energy",
-                                                  "Instrumentalness", "Liveness", "Speechiness", "Valence"])
-        print("Inverse-transformed predictions:")
-        print(df_pred)
-    except Exception as e:
-        print("Error during model prediction:", e)
-        return pd.DataFrame()
+    # After obtaining PCA-reduced features (X_pca) and predicting scaled y values:
+    y_pred_scaled = model.predict(X_pca)
+    print("Scaled predictions:", y_pred_scaled)
+
+    # Partition the scaled predictions according to the training order of high-level features.
+    # The model was trained to predict 7 features in this order:
+    # [Acousticness, Danceability, Energy, Instrumentalness, Liveness, Speechiness, Valence]
+    # Map these to our scaler groups as follows:
+    # u_shaped: Acousticness (index 0) and Instrumentalness (index 3)
+    # even: Danceability (index 1), Energy (index 2), Valence (index 6)
+    # skewed: Liveness (index 4) and Speechiness (index 5)
+
+    y_ushaped_scaled = y_pred_scaled[:, [0, 3]]
+    y_even_scaled = y_pred_scaled[:, [1, 2, 6]]
+    y_skewed_scaled = y_pred_scaled[:, [4, 5]]
+
+    # Load the separate scaler objects for y (if not already loaded):
+    with open(os.path.join(CURRENT_DIR, 'scaler_y_even.dill'), 'rb') as f:
+        scaler_y_even = dill.load(f)
+    with open(os.path.join(CURRENT_DIR, 'scaler_y_ushaped.dill'), 'rb') as f:
+        scaler_y_ushaped = dill.load(f)
+    with open(os.path.join(CURRENT_DIR, 'scaler_y_skewed.dill'), 'rb') as f:
+        scaler_y_skewed = dill.load(f)
+
+    # Inverse-transform each group separately
+    y_ushaped_inv = scaler_y_ushaped.inverse_transform(y_ushaped_scaled)
+    y_even_inv = scaler_y_even.inverse_transform(y_even_scaled)
+    y_skewed_inv = scaler_y_skewed.inverse_transform(y_skewed_scaled)
+
+    # Create DataFrames for each group with the original column names used during training
+    # Note: During training, the u_shaped scaler was fit on columns in this order:
+    # ['echonest_audio_features_instrumentalness', 'echonest_audio_features_acousticness']
+    # But the desired final order is to have acousticness first, then instrumentalness.
+    df_ushaped = pd.DataFrame(y_ushaped_inv, columns=['echonest_audio_features_instrumentalness', 'echonest_audio_features_acousticness'], index=df_low.index)
+    df_ushaped = df_ushaped[['echonest_audio_features_acousticness', 'echonest_audio_features_instrumentalness']]
+
+    # Similarly, the even scaler was fit on columns in this order:
+    # ['echonest_audio_features_energy', 'echonest_audio_features_danceability', 'echonest_audio_features_valence']
+    # and we want to reorder them to: danceability, energy, valence.
+    df_even = pd.DataFrame(y_even_inv, columns=['echonest_audio_features_energy', 'echonest_audio_features_danceability', 'echonest_audio_features_valence'], index=df_low.index)
+    df_even = df_even[['echonest_audio_features_danceability', 'echonest_audio_features_energy', 'echonest_audio_features_valence']]
+
+    # The skewed scaler was fit on columns in the order:
+    # ['echonest_audio_features_liveness', 'echonest_audio_features_speechiness']
+    # which matches the desired final order.
+    df_skewed = pd.DataFrame(y_skewed_inv, columns=['echonest_audio_features_liveness', 'echonest_audio_features_speechiness'], index=df_low.index)
+
+    # Define the desired final column order
+    final_order = [
+        'echonest_audio_features_acousticness',    # from u_shaped
+        'echonest_audio_features_danceability',      # from even
+        'echonest_audio_features_energy',            # from even
+        'echonest_audio_features_instrumentalness',    # from u_shaped
+        'echonest_audio_features_liveness',          # from skewed
+        'echonest_audio_features_speechiness',       # from skewed
+        'echonest_audio_features_valence'            # from even
+    ]
+
+    # Merge the inverse-transformed DataFrames
+    df_pred = pd.concat([df_ushaped, df_even, df_skewed], axis=1)
+    # Reorder columns to match the final desired order
+    df_pred = df_pred[final_order]
+
+    print("Inverse-transformed predictions:")
+    print(df_pred)
 
     # Compute tempo directly from the audio using librosa.beat.beat_track
     try:
         y, sr = librosa.load(mp3_path, sr=None, mono=True)
         tempo, _ = librosa.beat.beat_track(y=y, sr=sr)
-        # tempo = tempo / 2 # half time
+        tempo = tempo * 2 # half time
         print(f"Computed tempo from audio: {tempo}")
     except Exception as e:
         print("Error computing tempo from audio:", e)
@@ -223,18 +273,17 @@ def predict_high_features(mp3_path: str) -> pd.DataFrame:
     # 'tempo', 'danceability', 'energy', 'speechiness',
     #                'acousticness', 'instrumentalness', 'liveness', 'valence'
     final_data = {
-        "tempo": [float(tempo)],
-        "danceability": float(df_pred["Danceability"].iloc[0]),
-        "energy": float(df_pred["Energy"].iloc[0]),
-        "speechiness": float(df_pred["Speechiness"].iloc[0]),
-        "acousticness": float(df_pred["Acousticness"].iloc[0]),
-        "instrumentalness": float(df_pred["Instrumentalness"].iloc[0]),
-        "liveness": float(df_pred["Liveness"].iloc[0]),
-        "valence": float(df_pred["Valence"].iloc[0])
+        "tempo": [float(tempo[0])],
+        "danceability": float(df_pred["echonest_audio_features_danceability"].iloc[0]),
+        "energy": float(df_pred["echonest_audio_features_energy"].iloc[0]),
+        "speechiness": float(df_pred["echonest_audio_features_speechiness"].iloc[0]),
+        "acousticness": float(df_pred["echonest_audio_features_acousticness"].iloc[0]),
+        "instrumentalness": float(df_pred["echonest_audio_features_instrumentalness"].iloc[0]),
+        "liveness": float(df_pred["echonest_audio_features_liveness"].iloc[0]),
+        "valence": float(df_pred["echonest_audio_features_valence"].iloc[0])
     }
-    final_columns = ['tempo', 'danceability', 'energy', 'speechiness',
-                     'acousticness', 'instrumentalness', 'liveness', 'valence']
-    df_high = pd.DataFrame(final_data, columns=final_columns)
+
+    df_high = pd.DataFrame([final_data])
     return df_high
 
 # For testing:
