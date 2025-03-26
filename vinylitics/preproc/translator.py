@@ -12,7 +12,7 @@ CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(CURRENT_DIR, "low_to_high_model.keras")
 PCA_PATH = os.path.join(CURRENT_DIR, "pca_low_features.dill")
 SCALER_LOW_PATH = os.path.join(CURRENT_DIR, "scaler_low_features.dill")
-SCALER_Y_PATH = os.path.join(CURRENT_DIR, "scaler_y.dill")
+# SCALER_Y_PATH = os.path.join(CURRENT_DIR, "scaler_y.dill")
 ORDERED_COLS_PATH = os.path.join(CURRENT_DIR, "low_level_features_ordered.csv")
 
 # Expected moments for each feature
@@ -28,10 +28,12 @@ def get_ordered_columns():
         # Remove first element if it is numeric (e.g. a row number)
         if ordered_cols and ordered_cols[0].strip().isdigit():
             ordered_cols = ordered_cols[1:]
-        print("Ordered columns loaded:", ordered_cols[:5], "...")
+        if __name__ == '__main__':
+            print("Ordered columns loaded:", ordered_cols[:5], "...")
         return ordered_cols
     except Exception as e:
-        print("Error reading ordered columns:", e)
+        if __name__ == '__main__':
+            print("Error reading ordered columns:", e)
         raise
 
 def feature_stats(name, values):
@@ -54,9 +56,11 @@ def feature_stats(name, values):
         v_max = np.nanmax(values)
         v_mean = np.nanmean(values)
     except Exception as e:
-        print(f"Error computing summary for {name}: {e}")
+        if __name__ == '__main__':
+            print(f"Error computing summary for {name}: {e}")
         v_min, v_max, v_mean = None, None, None
-    print(f"Processing {name}: shape={values.shape}, min={v_min}, max={v_max}, mean={v_mean}")
+    if __name__ == '__main__':
+        print(f"Processing {name}: shape={values.shape}, min={v_min}, max={v_max}, mean={v_mean}")
     for stat in moments:
         func = stat_funcs[stat]
         try:
@@ -66,12 +70,14 @@ def feature_stats(name, values):
             else:
                 stat_vals = func(values, axis=1)
         except Exception as e:
-            print(f"Error computing {stat} for {name}: {e}")
+            if __name__ == '__main__':
+                print(f"Error computing {stat} for {name}: {e}")
             stat_vals = [0.0]
         for i, val in enumerate(stat_vals):
             key = f"{name}_{stat}_{i+1:02d}"
             if np.isnan(val):
-                print(f"Warning: {key} is NaN, replacing with 0")
+                if __name__ == '__main__':
+                    print(f"Warning: {key} is NaN, replacing with 0")
                 val = 0.0
             feat_vals[key] = val
     return feat_vals
@@ -88,9 +94,11 @@ def extract_low_features_from_mp3(mp3_path: str) -> pd.DataFrame:
     try:
         # Load the audio file (using mono)
         x, sr = librosa.load(mp3_path, sr=None, mono=True)
-        print(f"Loaded {mp3_path}: signal shape = {x.shape}, sr = {sr}")
+        if __name__ == '__main__':
+            print(f"Loaded {mp3_path}: signal shape = {x.shape}, sr = {sr}")
     except Exception as e:
-        print(f"Error loading {mp3_path}: {repr(e)}")
+        if __name__ == '__main__':
+            print(f"Error loading {mp3_path}: {repr(e)}")
         return pd.DataFrame()  # return empty if load fails
 
     try:
@@ -142,14 +150,16 @@ def extract_low_features_from_mp3(mp3_path: str) -> pd.DataFrame:
         feat_values.update(feature_stats('mfcc', mfcc))
 
     except Exception as e:
-        print(f"Error processing features for {mp3_path}: {repr(e)}")
+        if __name__ == '__main__':
+            print(f"Error processing features for {mp3_path}: {repr(e)}")
         return pd.DataFrame()
 
     df_features = pd.DataFrame([feat_values])
     # Reindex to match the ordered columns; missing columns become NaN (fill later)
     df_features = df_features.reindex(columns=feat_index)
-    print("Extracted low-level features DataFrame:")
-    print(df_features.head())
+    if __name__ == '__main__':
+        print("Extracted low-level features DataFrame:")
+        print(df_features.head())
     df_features = df_features.fillna(0)
     return df_features
 
@@ -167,8 +177,9 @@ def predict_high_features(mp3_path: str) -> pd.DataFrame:
         print("No low-level features extracted. Aborting prediction.")
         return pd.DataFrame()
 
-    print("Low-level features before scaling:")
-    print(df_low.describe().transpose().head())
+    if __name__ == '__main__':
+        print("Low-level features before scaling:")
+        print(df_low.describe().transpose().head())
 
     # Load the preprocessor objects and the model
     with open(SCALER_LOW_PATH, "rb") as f:
@@ -179,37 +190,38 @@ def predict_high_features(mp3_path: str) -> pd.DataFrame:
 
     try:
         X_scaled = scaler_low.transform(df_low)
-        print("Scaled low-level features shape:", X_scaled.shape)
-        print("Scaled low-level features (first row):", X_scaled[0, :5])
+        if __name__ == '__main__':
+            print("Scaled low-level features shape:", X_scaled.shape)
+            print("Scaled low-level features (first row):", X_scaled[0, :5])
     except Exception as e:
-        print("Error during scaling low-level features:", e)
+        if __name__ == '__main__':
+            print("Error during scaling low-level features:", e)
         return pd.DataFrame()
 
     try:
         X_pca = pca_low.transform(X_scaled)
-        print("PCA-reduced features shape:", X_pca.shape)
-        print("PCA output (first row):", X_pca[0, :5])
+        if __name__ == '__main__':
+            print("PCA-reduced features shape:", X_pca.shape)
+            print("PCA output (first row):", X_pca[0, :5])
     except Exception as e:
-        print("Error during PCA transformation:", e)
+        if __name__ == '__main__':
+            print("Error during PCA transformation:", e)
         return pd.DataFrame()
 
     # After obtaining PCA-reduced features (X_pca) and predicting scaled y values:
     y_pred_scaled = model.predict(X_pca)
-    print("Scaled predictions:", y_pred_scaled)
+    if __name__ == '__main__':
+        print("Scaled predictions:", y_pred_scaled)
 
     # Partition the scaled predictions according to the training order of high-level features.
     # The model was trained to predict 7 features in this order:
     # [Acousticness, Danceability, Energy, Instrumentalness, Liveness, Speechiness, Valence]
-    # Map these to our scaler groups as follows:
-    # u_shaped: Acousticness (index 0) and Instrumentalness (index 3)
-    # even: Danceability (index 1), Energy (index 2), Valence (index 6)
-    # skewed: Liveness (index 4) and Speechiness (index 5)
-
+    # We now want to force instrumentalness to 0, so we will override that later.
     y_ushaped_scaled = y_pred_scaled[:, [0, 3]]
     y_even_scaled = y_pred_scaled[:, [1, 2, 6]]
     y_skewed_scaled = y_pred_scaled[:, [4, 5]]
 
-    # Load the separate scaler objects for y (if not already loaded):
+    # Load the separate scaler objects for y:
     with open(os.path.join(CURRENT_DIR, 'scaler_y_even.dill'), 'rb') as f:
         scaler_y_even = dill.load(f)
     with open(os.path.join(CURRENT_DIR, 'scaler_y_ushaped.dill'), 'rb') as f:
@@ -222,30 +234,36 @@ def predict_high_features(mp3_path: str) -> pd.DataFrame:
     y_even_inv = scaler_y_even.inverse_transform(y_even_scaled)
     y_skewed_inv = scaler_y_skewed.inverse_transform(y_skewed_scaled)
 
-    # Create DataFrames for each group with the original column names used during training
-    # Note: During training, the u_shaped scaler was fit on columns in this order:
+    # Create DataFrames for each group with the original column names used during training.
+    # For u_shaped, the original order was:
     # ['echonest_audio_features_instrumentalness', 'echonest_audio_features_acousticness']
-    # But the desired final order is to have acousticness first, then instrumentalness.
-    df_ushaped = pd.DataFrame(y_ushaped_inv, columns=['echonest_audio_features_instrumentalness', 'echonest_audio_features_acousticness'], index=df_low.index)
+    df_ushaped = pd.DataFrame(y_ushaped_inv,
+                              columns=['echonest_audio_features_instrumentalness', 'echonest_audio_features_acousticness'],
+                              index=df_low.index)
+    # We want acousticness first and then instrumentalness, but force instrumentalness to 0.
     df_ushaped = df_ushaped[['echonest_audio_features_acousticness', 'echonest_audio_features_instrumentalness']]
+    df_ushaped["echonest_audio_features_instrumentalness"] = 0.0
 
-    # Similarly, the even scaler was fit on columns in this order:
+    # For even, the original order was:
     # ['echonest_audio_features_energy', 'echonest_audio_features_danceability', 'echonest_audio_features_valence']
-    # and we want to reorder them to: danceability, energy, valence.
-    df_even = pd.DataFrame(y_even_inv, columns=['echonest_audio_features_energy', 'echonest_audio_features_danceability', 'echonest_audio_features_valence'], index=df_low.index)
+    df_even = pd.DataFrame(y_even_inv,
+                           columns=['echonest_audio_features_energy', 'echonest_audio_features_danceability', 'echonest_audio_features_valence'],
+                           index=df_low.index)
+    # Reorder them to: danceability, energy, valence.
     df_even = df_even[['echonest_audio_features_danceability', 'echonest_audio_features_energy', 'echonest_audio_features_valence']]
 
-    # The skewed scaler was fit on columns in the order:
+    # For skewed, the order is:
     # ['echonest_audio_features_liveness', 'echonest_audio_features_speechiness']
-    # which matches the desired final order.
-    df_skewed = pd.DataFrame(y_skewed_inv, columns=['echonest_audio_features_liveness', 'echonest_audio_features_speechiness'], index=df_low.index)
+    df_skewed = pd.DataFrame(y_skewed_inv,
+                             columns=['echonest_audio_features_liveness', 'echonest_audio_features_speechiness'],
+                             index=df_low.index)
 
-    # Define the desired final column order
+    # Define the desired final column order (7 features, excluding tempo which is computed separately)
     final_order = [
         'echonest_audio_features_acousticness',    # from u_shaped
         'echonest_audio_features_danceability',      # from even
         'echonest_audio_features_energy',            # from even
-        'echonest_audio_features_instrumentalness',    # from u_shaped
+        'echonest_audio_features_instrumentalness',    # from u_shaped (forced to 0)
         'echonest_audio_features_liveness',          # from skewed
         'echonest_audio_features_speechiness',       # from skewed
         'echonest_audio_features_valence'            # from even
@@ -256,24 +274,27 @@ def predict_high_features(mp3_path: str) -> pd.DataFrame:
     # Reorder columns to match the final desired order
     df_pred = df_pred[final_order]
 
-    print("Inverse-transformed predictions:")
-    print(df_pred)
+    if __name__ == '__main__':
+        print("Inverse-transformed predictions (after forcing instrumentalness to 0):")
+        print(df_pred)
 
     # Compute tempo directly from the audio using librosa.beat.beat_track
     try:
-        y, sr = librosa.load(mp3_path, sr=None, mono=True)
-        tempo, _ = librosa.beat.beat_track(y=y, sr=sr)
-        tempo = tempo * 2 # half time
-        print(f"Computed tempo from audio: {tempo}")
+        y_audio, sr = librosa.load(mp3_path, sr=None, mono=True)
+        tempo, _ = librosa.beat.beat_track(y=y_audio, sr=sr)
+        tempo = tempo * 2  # half-time adjustment
+        if __name__ == '__main__':
+            print(f"Computed tempo from audio: {tempo}")
     except Exception as e:
-        print("Error computing tempo from audio:", e)
+        if __name__ == '__main__':
+            print("Error computing tempo from audio:", e)
         tempo = 0.0
 
     # Reassemble final DataFrame with correct column order for nearest neighbors search:
-    # 'tempo', 'danceability', 'energy', 'speechiness',
-    #                'acousticness', 'instrumentalness', 'liveness', 'valence'
+    # Order: 'tempo', 'danceability', 'energy', 'speechiness',
+    #        'acousticness', 'instrumentalness', 'liveness', 'valence'
     final_data = {
-        "tempo": [float(tempo[0])],
+        "tempo": float(tempo[0]) if isinstance(tempo, np.ndarray) else float(tempo),
         "danceability": float(df_pred["echonest_audio_features_danceability"].iloc[0]),
         "energy": float(df_pred["echonest_audio_features_energy"].iloc[0]),
         "speechiness": float(df_pred["echonest_audio_features_speechiness"].iloc[0]),
@@ -294,4 +315,4 @@ if __name__ == '__main__':
     print("Predicted high-level features:")
     print(df_high)
     # Optionally, export the final DataFrame to CSV for debugging:
-    df_high.to_csv("high_level_features.csv", index=False)
+    # df_high.to_csv("high_level_features.csv", index=False)
