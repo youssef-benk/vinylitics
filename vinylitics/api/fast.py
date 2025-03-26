@@ -6,6 +6,7 @@ from vinylitics.preproc.translator import extract_low_features_from_mp3, predict
 from thefuzz import process, fuzz
 from vinylitics.preproc.data import load_data, clean_data
 from vinylitics.params import GCP_PROJECT, BQ_DATASET, DS
+import os
 
 app = FastAPI()
 
@@ -50,7 +51,7 @@ def fuzzy_search(track_name: str, artist: str):
         # Combine track name and artist for fuzzy matching
         query = track_name + " " + artist
         # Create a list of combined strings for each track in the dataframe
-        choices = (app.state.df_og['track_name'] + " by " + app.state.df_og['artists']).tolist()
+        choices = (app.state.df['track_name'] + " by " + app.state.df['artists']).tolist()
         # Get the top 3 matches
         return {"result": "No exact match found", "choices": process.extract(query, choices, limit=3, scorer=fuzz.token_set_ratio)}
     else:
@@ -80,21 +81,20 @@ def predict_spotify(track_name: str, artist: str):
 
 @app.get("/song_scrap")
 def song_scrap(track_name: str):
-    """_summary_
-
-    Args:
-        track_name (str): _description_
     """
-    ordered_cols = get_ordered_columns()
+        Returns the high features describing audio from a a song scraped
+        from youtube. The song scrape is the first one returned when looking for
+        the given trackname.
+    """
     audio_path = get_mp3(track_name)
+    if audio_path.isfile():
+        # Compute the low features with librosa and gets there stat
+        low_features = extract_low_features_from_mp3(audio_path)
+        # Compute the high features with our own trained RNN
+        df_high = predict_high_features(low_features)
 
-    # Compute the low features with librosa and gets there stat
-    low_features = extract_low_features_from_mp3(audio_path)
-
-    # Compute the high features with our own trained RNN
-    df_high = predict_high_features(low_features)
-
-    if df_high is not None:
+        # Remove the audio file not to clutter the docker image
+        os.remove(audio_path)
         return {'result': df_high.to_dict()}
-    else:
-        return {"error": "Something went wrong."}
+
+    return {"error": "Something went wrong."}
