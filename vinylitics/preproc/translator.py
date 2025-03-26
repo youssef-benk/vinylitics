@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 import numpy as np
 import pandas as pd
 from scipy import stats
@@ -6,6 +7,7 @@ import librosa
 import warnings
 import dill
 import tensorflow as tf
+from vinylitics.params import LOCAL_DOCKER_PATH, MOMENTS
 
 # Define absolute paths for the required files (assuming all files are in the same folder as this script)
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -13,23 +15,28 @@ MODEL_PATH = os.path.join(CURRENT_DIR, "low_to_high_model.keras")
 PCA_PATH = os.path.join(CURRENT_DIR, "pca_low_features.dill")
 SCALER_LOW_PATH = os.path.join(CURRENT_DIR, "scaler_low_features.dill")
 # SCALER_Y_PATH = os.path.join(CURRENT_DIR, "scaler_y.dill")
-ORDERED_COLS_PATH = os.path.join(CURRENT_DIR, "low_level_features_ordered.csv")
+# ORDERED_COLS_PATH = os.path.join(CURRENT_DIR, "low_level_features_ordered.csv")
 
 # Expected moments for each feature
-moments = ['mean', 'std', 'skew', 'kurtosis', 'median', 'min', 'max']
+moments = MOMENTS
 
 def get_ordered_columns():
     """
     Reads the ordered column names from low_level_features_ordered.csv.
     Assumes one column name per row.
     """
+    # Find where the data is stored:
+    data_path_local = Path("low_level_features_ordered.csv")
+    data_path_docker = Path(LOCAL_DOCKER_PATH).joinpath("low_level_features_ordered.csv")
+    data_path = data_path_local if data_path_local.is_file() else data_path_docker
+
     try:
-        ordered_cols = pd.read_csv(ORDERED_COLS_PATH, header=None)[0].tolist()
+        ordered_cols = pd.read_csv(data_path, header=None)[0].tolist()
         # Remove first element if it is numeric (e.g. a row number)
         if ordered_cols and ordered_cols[0].strip().isdigit():
             ordered_cols = ordered_cols[1:]
-        if __name__ == '__main__':
-            print("Ordered columns loaded:", ordered_cols[:5], "...")
+        # if __name__ == '__main__':
+        #     print("Ordered columns loaded:", ordered_cols[:5], "...")
         return ordered_cols
     except Exception as e:
         if __name__ == '__main__':
@@ -182,11 +189,11 @@ def predict_high_features(mp3_path: str) -> pd.DataFrame:
         print(df_low.describe().transpose().head())
 
     # Load the preprocessor objects and the model
-    with open(SCALER_LOW_PATH, "rb") as f:
+    with open("scaler_low_features.dill", "rb") as f:
         scaler_low = dill.load(f)
-    with open(PCA_PATH, "rb") as f:
+    with open("pca_low_features.dill", "rb") as f:
         pca_low = dill.load(f)
-    model = tf.keras.models.load_model(MODEL_PATH)
+    model = tf.keras.models.load_model("low_to_high_model.keras")
 
     try:
         X_scaled = scaler_low.transform(df_low)
@@ -222,11 +229,11 @@ def predict_high_features(mp3_path: str) -> pd.DataFrame:
     y_skewed_scaled = y_pred_scaled[:, [4, 5]]
 
     # Load the separate scaler objects for y:
-    with open(os.path.join(CURRENT_DIR, 'scaler_y_even.dill'), 'rb') as f:
+    with open('scaler_y_even.dill', 'rb') as f:
         scaler_y_even = dill.load(f)
-    with open(os.path.join(CURRENT_DIR, 'scaler_y_ushaped.dill'), 'rb') as f:
+    with open('scaler_y_ushaped.dill', 'rb') as f:
         scaler_y_ushaped = dill.load(f)
-    with open(os.path.join(CURRENT_DIR, 'scaler_y_skewed.dill'), 'rb') as f:
+    with open('scaler_y_skewed.dill', 'rb') as f:
         scaler_y_skewed = dill.load(f)
 
     # Inverse-transform each group separately
@@ -309,7 +316,7 @@ def predict_high_features(mp3_path: str) -> pd.DataFrame:
 
 # For testing:
 if __name__ == '__main__':
-    test_mp3_path = "/Users/adviti/code/youssef-benk/vinylitics/The Weeknd - Blinding Lights (Official Audio).mp3"
+    test_mp3_path = "The Weeknd - Blinding Lights (Official Audio).mp3"
     print("Extracting high-level features for:", test_mp3_path)
     df_high = predict_high_features(test_mp3_path)
     print("Predicted high-level features:")
