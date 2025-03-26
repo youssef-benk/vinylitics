@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from vinylitics.preproc.recommender import recommend_track
+from vinylitics.preproc.getmp3 import  get_mp3
+from vinylitics.preproc.translator import extract_low_features_from_mp3, predict_high_features, get_ordered_columns
 from thefuzz import process, fuzz
 from vinylitics.preproc.data import load_data, clean_data
 from vinylitics.params import GCP_PROJECT, BQ_DATASET, DS
@@ -74,3 +76,25 @@ def predict_spotify(track_name: str, artist: str):
                 'sel_track': selected_track.to_dict()}
     else:
         return {"error": "Track not found"}
+
+
+@app.get("/song_scrap")
+def song_scrap(track_name: str):
+    """_summary_
+
+    Args:
+        track_name (str): _description_
+    """
+    ordered_cols = get_ordered_columns()
+    audio_path = get_mp3(track_name)
+
+    # Compute the low features with librosa and gets there stat
+    low_features = extract_low_features_from_mp3(audio_path)
+
+    # Compute the high features with our own trained RNN
+    df_high = predict_high_features(low_features)
+
+    if df_high is not None:
+        return {'result': df_high.to_dict()}
+    else:
+        return {"error": "Something went wrong."}

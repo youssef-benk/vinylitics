@@ -11,6 +11,8 @@ KEEP_COLUMNS = [
     'instrumentalness', 'liveness', 'valence'
     ] #'loudness', 'genre_danceability', 'genre_energy', 'genre_valence','mode','key_sin', 'key_cos', 'popularity', 'duration_ms', ,  'time_signature'
 
+MOMENTS = ['mean', 'std', 'skew', 'kurtosis', 'median', 'min', 'max']
+
 ##################  VARIABLES  ##################
 SPOTIFY_CLIENT_ID = os.environ.get("SPOTIFY_CLIENT_ID")
 SPOTIFY_CLIENT_SECRET = os.environ.get("SPOTIFY_CLIENT_SECRET")
