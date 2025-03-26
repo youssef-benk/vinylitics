@@ -314,5 +314,3 @@ if __name__ == '__main__':
     df_high = predict_high_features(test_mp3_path)
     print("Predicted high-level features:")
     print(df_high)
-    # Optionally, export the final DataFrame to CSV for debugging:
-    # df_high.to_csv("high_level_features.csv", index=False)
