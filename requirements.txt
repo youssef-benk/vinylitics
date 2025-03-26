@@ -15,10 +15,10 @@ google-cloud-storage==2.14.0
 google-api-core==2.8.2
 googleapis-common-protos==1.56.4
 librosa
-os
 yt-dlp
-
-
+tensorflow
+ffmpeg
+ffprobe
 
 # API
 fastapi==0.108.0

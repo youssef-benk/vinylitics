@@ -7,6 +7,7 @@ from thefuzz import process, fuzz
 from vinylitics.preproc.data import load_data, clean_data
 from vinylitics.params import GCP_PROJECT, BQ_DATASET, DS
 import os
+from pathlib import Path
 
 app = FastAPI()
 
@@ -87,11 +88,10 @@ def song_scrap(track_name: str):
         the given trackname.
     """
     audio_path = get_mp3(track_name)
-    if audio_path.isfile():
-        # Compute the low features with librosa and gets there stat
-        low_features = extract_low_features_from_mp3(audio_path)
+    if Path(audio_path).is_file():
+
         # Compute the high features with our own trained RNN
-        df_high = predict_high_features(low_features)
+        df_high = predict_high_features(audio_path)
 
         # Remove the audio file not to clutter the docker image
         os.remove(audio_path)
