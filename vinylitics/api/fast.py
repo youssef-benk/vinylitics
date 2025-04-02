@@ -76,6 +76,8 @@ async def predict_spotify(track_name: str, artist: str):
     artist_decoded = unquote(artist)
     # Call the recommender function
     result, selected_track = recommend_track(track_name_decoded, artist_decoded, app.state.df)
+    print("got out of recommender function")
+    print(selected_track)
     if result is not None:
         return {'result': result.to_dict(),
                 'sel_track': selected_track.to_dict()}
@@ -101,3 +103,8 @@ def song_scrap(track_name: str):
         return {'result': df_high.to_dict()}
 
     return {"error": "Something went wrong."}
+
+@app.get("/track")
+async def get_track(track_name: str):
+    track_name_decoded = unquote(track_name)
+    return {"track_name": track_name_decoded}

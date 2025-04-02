@@ -17,6 +17,7 @@ def recommend_track(track_name, artist, df:pd.DataFrame):
 
     selected_track = df[(df['track_name'] == track_name) & (df['artists'] == artist)]
     if selected_track.empty:
+        print("❌ no direct match for this track")
         # Deploy fuzzy search if track not found
 
         # Combine track name and artist for fuzzy matching
@@ -50,11 +51,12 @@ def recommend_track(track_name, artist, df:pd.DataFrame):
     distances, indices = find_neighbors(track_preproc)
 
     result = df.iloc[indices[0][1:]].sort_values(by='popularity', ascending=True)
-    # print(result)
+    print("result found")
     if __name__ == '__main__':
-        print(result)
+        print(result[['track_name', 'artists']])
     return result[['track_name', 'artists', 'track_id', 'popularity', 'tempo', 'danceability', 'energy', 'speechiness', 'acousticness',
-    'instrumentalness', 'liveness', 'valence']], selected_track
+    'instrumentalness', 'liveness', 'valence']], selected_track [['track_name', 'artists', 'track_id', 'popularity', 'tempo', 'danceability', 'energy', 'speechiness', 'acousticness',
+    'instrumentalness', 'liveness', 'valence']]
 
 if __name__ == "__main__":
     df = pd.read_csv("/Users/sbeasse/code/youssef-benk/vinylitics/raw_data/dataframe_2.csv")
