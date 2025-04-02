@@ -8,6 +8,7 @@ from vinylitics.preproc.data import load_data, clean_data
 from vinylitics.params import GCP_PROJECT, BQ_DATASET, DS
 import os
 from pathlib import Path
+from urllib.parse import unquote
 
 app = FastAPI()
 
@@ -61,7 +62,7 @@ def fuzzy_search(track_name: str, artist: str):
 
 
 @app.get("/predict_spotify")
-def predict_spotify(track_name: str, artist: str):
+async def predict_spotify(track_name: str, artist: str):
     """_summary_
 
     Args:
@@ -71,8 +72,12 @@ def predict_spotify(track_name: str, artist: str):
     Returns:
         Hidden gems: similar but less popular songs from our Spotify dataset.
     """
+    track_name_decoded = unquote(track_name)
+    artist_decoded = unquote(artist)
     # Call the recommender function
-    result, selected_track = recommend_track(track_name, artist, app.state.df)
+    result, selected_track = recommend_track(track_name_decoded, artist_decoded, app.state.df)
+    print("got out of recommender function")
+    print(selected_track)
     if result is not None:
         return {'result': result.to_dict(),
                 'sel_track': selected_track.to_dict()}
@@ -98,3 +103,8 @@ def song_scrap(track_name: str):
         return {'result': df_high.to_dict()}
 
     return {"error": "Something went wrong."}
+
+@app.get("/track")
+async def get_track(track_name: str):
+    track_name_decoded = unquote(track_name)
+    return {"track_name": track_name_decoded}
