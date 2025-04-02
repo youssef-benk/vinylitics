@@ -6,8 +6,8 @@ from thefuzz import process, fuzz
 import pandas as pd
 from vinylitics.preproc.data import load_data
 
-if __name__ == '__main__':
-        df = load_data()
+# if __name__ == '__main__':
+#         df = load_data()
 
 def recommend_track(track_name, artist, df:pd.DataFrame):
     track_name = track_name.lower().strip()
@@ -57,4 +57,5 @@ def recommend_track(track_name, artist, df:pd.DataFrame):
     'instrumentalness', 'liveness', 'valence']], selected_track
 
 if __name__ == "__main__":
-    recommend_track("Sacred Cycles?", "Pete Lazonby")
+    df = pd.read_csv("/Users/sbeasse/code/youssef-benk/vinylitics/raw_data/dataframe_2.csv")
+    recommend_track("single ladies put a ring on it", "beyonce", df)
