@@ -33,9 +33,7 @@ once we have a match, we use the song's spotify-engineered audio features (like 
 **4. hidden gems filter**
 from those neighbours, we return the **10 least famous** ones: the hidden gems.
 
----
-
-## bonus feature (built, not shipped)
+### bonus feature (built, not shipped)
 
 we also built an extended pipeline for songs that aren't in the database at all:
 
