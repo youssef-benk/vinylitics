@@ -13,11 +13,13 @@ built as the capstone project of the [le wagon](https://www.lewagon.com/) bootca
 
 you give vinylitics a song. it gives you ten you've probably never heard, but will want to.
 
-under the hood, the app searches a database of **1 million songs** (sourced from a hugging face dataset scraped from the spotify api) and uses audio feature analysis and machine learning to find the closest sonic neighbours to your input, then deliberately surfaces only the least famous ones.
+under the hood, the app searches a database of **1 million songs** (sourced from hugging face and kaggle datasets, originally scraped from the spotify api) and uses audio feature analysis and machine learning to find the closest sonic neighbours to your input, then deliberately surfaces only the least famous ones.
 
 ---
 
 ## how it works
+
+![](./workflow.png)
 
 **1. input**
 the user enters a track name and artist.
