@@ -51,7 +51,7 @@ gar_creation:
 		--location=${GCP_REGION} --description="Repository for storing ${GAR_REPO} images"
 
 docker_build:
-	docker build --platform linux/amd64 -t ${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT}/${GAR_REPO}/${GAR_IMAGE}:prod .
+	docker buildx build --platform linux/amd64 -t ${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT}/${GAR_REPO}/${GAR_IMAGE}:prod .
 
 docker_push:
 	docker push ${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT}/${GAR_REPO}/${GAR_IMAGE}:prod
