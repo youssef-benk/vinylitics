@@ -50,8 +50,8 @@ this feature was fully developed but didn't make it into the final deployed app 
 | layer | technology |
 |---|---|
 | api | fastapi, uvicorn |
-| ml | scikit-learn, tensorflow, librosa |
-| data | pandas, numpy, scipy |
+| machine and deep learning | scikit-learn, tensorflow, librosa |
+| data preprocessing | pandas, numpy, scipy |
 | fuzzy search | thefuzz |
 | audio | yt-dlp, ffmpeg |
 | storage | google cloud storage, bigquery |
@@ -62,7 +62,7 @@ this feature was fully developed but didn't make it into the final deployed app 
 ## sources
 - [spotify tracks dataset, hugging face](https://huggingface.co/datasets/maharshipandya/spotify-tracks-dataset)
 - [spotify 1.2M dataset, kaggle](https://www.kaggle.com/datasets/rodolfofigueroa/spotify-12m-songs)
-- [spotify 1million track, kaggle](https://www.kaggle.com/datasets/amitanshjoshi/spotify-1million-tracks)
+- [spotify 1 million tracks, kaggle](https://www.kaggle.com/datasets/amitanshjoshi/spotify-1million-tracks)
 
 ## the team
 ⚡️ [dj flore](https://github.com/flore-perr)
